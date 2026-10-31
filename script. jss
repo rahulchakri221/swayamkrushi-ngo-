@@ -1,0 +1,72 @@
+const menuToggle = document.querySelector('.menu-toggle');
+const nav = document.querySelector('.nav-links');
+
+menuToggle?.addEventListener('click', () => {
+  const open = nav.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', String(open));
+});
+
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    nav.classList.remove('open');
+    menuToggle?.setAttribute('aria-expanded', 'false');
+  });
+});
+
+document.getElementById('year').textContent =
+  new Date().getFullYear();
+
+let selectedAmount = 1000;
+
+document.querySelectorAll('[data-amount]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    selectedAmount = Number(btn.dataset.amount);
+    document.getElementById('customAmount').value = '';
+
+    document.querySelectorAll('[data-amount]').forEach(b => {
+      b.classList.toggle('selected', b === btn);
+    });
+  });
+});
+
+document.getElementById('customAmount').addEventListener('input', e => {
+  if (e.target.value) {
+    selectedAmount = Number(e.target.value);
+    document.querySelectorAll('[data-amount]').forEach(b => {
+      b.classList.remove('selected');
+    });
+  }
+});
+
+document.getElementById('donateButton').addEventListener('click', () => {
+  const custom = Number(document.getElementById('customAmount').value);
+  const amount = custom || selectedAmount;
+
+  if (!Number.isFinite(amount) || amount < 1 || amount > 1000000) {
+    alert('Please enter a valid donation amount.');
+    return;
+  }
+
+  alert('Thank you for supporting Swayamkrushi! Online payments are not activated yet. Razorpay setup is required.');
+});
+
+document.getElementById('contactForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  const f = new FormData(e.currentTarget);
+
+  const subject = encodeURIComponent(
+    'Website enquiry - ' + f.get('topic')
+  );
+
+  const body = encodeURIComponent(
+    'Name: ' + f.get('name') +
+    '\nContact: ' + f.get('reply') +
+    '\nTopic: ' + f.get('topic') +
+    '\n\n' + f.get('message')
+  );
+
+  window.location.href =
+    'mailto:REPLACE_WITH_PUBLIC_NGO_EMAIL?subject=' +
+    subject + '&body=' + body;
+});
